@@ -37,5 +37,5 @@ Avoid generic labyrinth. Prefer concrete types and macro-generated code.
 Designed for networking from the ground up.
 
 - **Varint length-prefix**: Streaming friendly
-- **Framed transport**: Built-in support in `ax_codec-net`
+- **Framed transport**: Built-in support in `ax-codec-net`
 - **Backpressure safe**: Async decoder with partial parsing

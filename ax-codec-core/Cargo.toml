@@ -1,5 +1,5 @@
 [package]
-name = "ax_codec-core"
+name = "ax-codec-core"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -30,7 +30,7 @@ tikv-jemallocator = { version = "0.6", optional = true }
 tikv-jemalloc-ctl = { version = "0.6", optional = true, features = ["stats"] }
 
 [dev-dependencies]
-ax_codec-derive = { path = "../ax_codec-derive" }
+ax-codec-derive = { path = "../ax-codec-derive" }
 criterion = { version = "0.5" }
 rand = { version = "0.8" }
 

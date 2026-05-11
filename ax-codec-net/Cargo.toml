@@ -1,5 +1,5 @@
 [package]
-name = "ax_codec-net"
+name = "ax-codec-net"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -12,14 +12,14 @@ categories = ["encoding", "network-programming"]
 
 [features]
 default = ["std"]
-std = ["ax_codec-core/std", "ax_codec-bytes/std"]
+std = ["ax-codec-core/std", "ax-codec-bytes/std"]
 tokio = ["dep:tokio"]
 tokio-codec = ["tokio", "dep:tokio-util", "dep:bytes"]
 
 [dependencies]
-ax_codec-core = { workspace = true }
-ax_codec-bytes = { workspace = true }
-ax_codec-derive = { path = "../ax_codec-derive", version = "0.1.0" }
+ax-codec-core = { workspace = true }
+ax-codec-bytes = { workspace = true }
+ax-codec-derive = { path = "../ax-codec-derive", version = "0.1.0" }
 tokio = { version = "1", features = ["io-util"], optional = true }
 tokio-util = { version = "0.7.14", features = ["codec", "io"], optional = true }
 bytes = { version = "1.8.0", optional = true }
@@ -28,8 +28,8 @@ bytes = { version = "1.8.0", optional = true }
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 tokio-util = { version = "0.7", features = ["codec"] }
 futures = "0.3"
-ax_codec-core = { path = "../ax_codec-core", features = ["simd"] }
-ax_codec-derive = { path = "../ax_codec-derive" }
+ax-codec-core = { path = "../ax-codec-core", features = ["simd"] }
+ax-codec-derive = { path = "../ax-codec-derive" }
 
 [[test]]
 name = "codec_integration"

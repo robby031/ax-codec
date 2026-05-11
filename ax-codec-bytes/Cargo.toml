@@ -1,5 +1,5 @@
 [package]
-name = "ax_codec-bytes"
+name = "ax-codec-bytes"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -12,13 +12,13 @@ categories = ["encoding"]
 
 [features]
 default = ["std", "bytes"]
-std = ["ax_codec-core/std", "alloc"]
-alloc = ["ax_codec-core/alloc"]
+std = ["ax-codec-core/std", "alloc"]
+alloc = ["ax-codec-core/alloc"]
 bytes = ["dep:bytes"]
 smallvec = ["dep:smallvec"]
 
 [dependencies]
-ax_codec-core = { workspace = true }
+ax-codec-core = { workspace = true }
 bytes = { version = "1", optional = true }
 smallvec = { version = "1", optional = true }
 

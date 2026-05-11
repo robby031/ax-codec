@@ -53,4 +53,4 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: thumbv7em-none-eabihf
-      - run: cargo check --target thumbv7em-none-eabihf --no-default-features --features alloc -p ax_codec-core
+      - run: cargo check --target thumbv7em-none-eabihf --no-default-features --features alloc -p ax-codec-core

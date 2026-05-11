@@ -119,12 +119,12 @@ ax_codec uses **stable Rust** (see `rust-toolchain.toml`). Cargo will automatica
 cargo test --all-features --workspace
 
 # Test individual crate
-cargo test --all-features -p ax_codec-core
-cargo test --all-features -p ax_codec-bytes
-cargo test --all-features -p ax_codec-net
+cargo test --all-features -p ax-codec-core
+cargo test --all-features -p ax-codec-bytes
+cargo test --all-features -p ax-codec-net
 
 # no_std compatibility (alloc only)
-cargo test --no-default-features --features alloc -p ax_codec-core
+cargo test --no-default-features --features alloc -p ax-codec-core
 ```
 
 ### Code quality
@@ -141,20 +141,20 @@ cargo clippy --all-features --workspace -- -D warnings
 ### Quick benchmarks
 
 ```bash
-cargo bench --all-features -p ax_codec-core
+cargo bench --all-features -p ax-codec-core
 ```
 
 ### Comprehensive metrics (decode latency, payload size, scaling)
 
 ```bash
 # Payload size comparison
-cargo run --features std -p ax_codec-core --example payload_sizes
+cargo run --features std -p ax-codec-core --example payload_sizes
 
 # Decode latency + scaling behavior
-cargo bench --all-features -p ax_codec-core --bench comprehensive_bench
+cargo bench --all-features -p ax-codec-core --bench comprehensive_bench
 
 # Allocation count (dhat)
-cargo run --features "std dhat-heap" -p ax_codec-core --example dhat_profile
+cargo run --features "std dhat-heap" -p ax-codec-core --example dhat_profile
 
 # Full metrics script (compile time, binary size, RSS)
 ./scripts/bench-metrics.sh
@@ -166,12 +166,12 @@ cargo run --features "std dhat-heap" -p ax_codec-core --example dhat_profile
 | ----------------- | -------------------------- | ---------- | ----------------------------------------------------------- |
 | **dhat**          | alloc count, heap profile  | All        | `cargo run --features dhat-heap --example dhat_profile`     |
 | **heaptrack**     | heap tracking              | Linux only | `heaptrack cargo run --example dhat_profile --features std` |
-| **cargo-bloat**   | binary size breakdown      | All        | `cargo bloat --release -p ax_codec-core`                    |
+| **cargo-bloat**   | binary size breakdown      | All        | `cargo bloat --release -p ax-codec-core`                    |
 | **/usr/bin/time** | RSS, peak memory           | All        | `/usr/bin/time -l cargo run --example dhat_profile`         |
 | **jemalloc**      | heap stats, fragmentation  | All        | See `examples/jemalloc_profile.rs`                          |
 | **Instruments**   | Time profiler, allocations | macOS      | `instruments -t 'Time Profiler' cargo run ...`              |
 
-See `ax_codec-core/benches/` for ax_codec-specific benchmarks covering varint, struct encode/decode, and throughput scaling.
+See `ax-codec-core/benches/` for ax_codec-specific benchmarks covering varint, struct encode/decode, and throughput scaling.
 
 ---
 

@@ -2,12 +2,12 @@
 
 ## Crate Layout
 
-### ax_codec-core
+### ax-codec-core
 
 Core library with traits and implementations.
 
 ```
-ax_codec-core/src/
+ax-codec-core/src/
 ├── lib.rs          # Core traits: Encode, Decode, View, BufferReader, BufferWriter
 ├── varint.rs       # Varint encoding/decoding (LEB128)
 ├── buffer.rs       # I/O abstractions: SliceReader, VecWriter, PooledVecWriter
@@ -20,33 +20,33 @@ ax_codec-core/src/
 └── bytes_impl.rs   # bytes::Bytes integration (optional, bytes feature)
 ```
 
-### ax_codec-derive
+### ax-codec-derive
 
 Proc macro crate for derive macros.
 
 ```
-ax_codec-derive/src/
+ax-codec-derive/src/
 └── lib.rs          # #[derive(Encode, Decode, View)] implementations
 ```
 
-### ax_codec-bytes
+### ax-codec-bytes
 
 Optional crate for byte container optimizations.
 
 ```
-ax_codec-bytes/src/
+ax-codec-bytes/src/
 ├── lib.rs
 ├── bytes_impl.rs
 ├── pool.rs
 └── smallvec_impl.rs
 ```
 
-### ax_codec-net
+### ax-codec-net
 
 Optional crate for networking (Tokio integration).
 
 ```
-ax_codec-net/src/
+ax-codec-net/src/
 ├── lib.rs
 ├── codec.rs        # ax_codec<T> for tokio_util::codec
 └── framed.rs       # Frame encoder/decoder

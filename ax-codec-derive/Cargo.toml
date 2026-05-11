@@ -1,5 +1,5 @@
 [package]
-name = "ax_codec-derive"
+name = "ax-codec-derive"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

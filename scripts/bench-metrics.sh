@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-BENCH_DIR="$ROOT_DIR/ax_codec-core"
+BENCH_DIR="$ROOT_DIR/ax-codec-core"
 
 echo "=================================================="
 echo " ax_codec Comprehensive Benchmark Metrics"
@@ -27,16 +27,16 @@ echo "--- Binary Size (release, stripped) ---"
 cd "$ROOT_DIR"
 cargo build --all-features --workspace --release
 
-for crate in ax_codec-core ax_codec-derive ax_codec-bytes ax_codec-net; do
+for crate in ax-codec-core ax-codec-derive ax-codec-bytes ax-codec-net; do
     if [ -f "target/release/lib${crate}.rlib" ]; then
         ls -lh "target/release/lib${crate}.rlib" | awk '{print "  " $9 ": " $5}'
     fi
 done
 
 echo ""
-echo "Binary size with cargo-bloat (ax_codec-core example):"
+echo "Binary size with cargo-bloat (ax-codec-core example):"
 if command -v cargo-bloat &>/dev/null; then
-    cargo bloat --release -p ax_codec-core --example dhat_profile 2>&1 | head -20 || true
+    cargo bloat --release -p ax-codec-core --example dhat_profile 2>&1 | head -20 || true
 else
     echo "  (cargo-bloat not installed: cargo install cargo-bloat)"
 fi

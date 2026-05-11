@@ -11,8 +11,8 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-ax_codec-core = { path = "../ax_codec-core" }
-ax_codec-derive = { path = "../ax_codec-derive" }
+ax-codec-core = { path = "../ax-codec-core" }
+ax-codec-derive = { path = "../ax-codec-derive" }
 
 [[bin]]
 name = "fuzz_varint"

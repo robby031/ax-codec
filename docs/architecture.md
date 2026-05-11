@@ -54,7 +54,7 @@ Advantages:
 
 ## Design Layers
 
-### 1. ax_codec-core
+### 1. ax-codec-core
 
 Pure low-level primitives.
 
@@ -80,7 +80,7 @@ View
 
 ---
 
-### 2. ax_codec-bytes
+### 2. ax-codec-bytes
 
 Optimized byte containers.
 
@@ -96,7 +96,7 @@ minimize allocation churn.
 
 ---
 
-### 3. ax_codec-derive
+### 3. ax-codec-derive
 
 Macro derive.
 
@@ -118,7 +118,7 @@ Generated code must be:
 
 ---
 
-### 4. ax_codec-net
+### 4. ax-codec-net
 
 Networking layer.
 
@@ -367,10 +367,10 @@ Don't sacrifice maintainability for absurd microbenchmarks.
 
 ```text
 ax_codec/
- ├── ax_codec-core/
- ├── ax_codec-derive/
- ├── ax_codec-bytes/
- ├── ax_codec-net/
+ ├── ax-codec-core/
+ ├── ax-codec-derive/
+ ├── ax-codec-bytes/
+ ├── ax-codec-net/
  ├── benches/
  ├── fuzz/
  └── tests/

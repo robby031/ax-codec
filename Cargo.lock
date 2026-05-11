@@ -45,29 +45,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
-name = "ax_codec"
+name = "ax-codec-bytes"
 version = "0.1.0"
 dependencies = [
- "ax_codec-bytes",
- "ax_codec-core",
- "ax_codec-derive",
- "ax_codec-net",
-]
-
-[[package]]
-name = "ax_codec-bytes"
-version = "0.1.0"
-dependencies = [
- "ax_codec-core",
+ "ax-codec-core",
  "bytes",
  "smallvec",
 ]
 
 [[package]]
-name = "ax_codec-core"
+name = "ax-codec-core"
 version = "0.1.0"
 dependencies = [
- "ax_codec-derive",
+ "ax-codec-derive",
  "axhash-map",
  "bytes",
  "crc32fast",
@@ -79,7 +69,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ax_codec-derive"
+name = "ax-codec-derive"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
@@ -88,16 +78,26 @@ dependencies = [
 ]
 
 [[package]]
-name = "ax_codec-net"
+name = "ax-codec-net"
 version = "0.1.0"
 dependencies = [
- "ax_codec-bytes",
- "ax_codec-core",
- "ax_codec-derive",
+ "ax-codec-bytes",
+ "ax-codec-core",
+ "ax-codec-derive",
  "bytes",
  "futures",
  "tokio",
  "tokio-util",
+]
+
+[[package]]
+name = "ax_codec"
+version = "0.1.0"
+dependencies = [
+ "ax-codec-bytes",
+ "ax-codec-core",
+ "ax-codec-derive",
+ "ax-codec-net",
 ]
 
 [[package]]

@@ -1,7 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-pub use axcodec_core::*;
-pub use axcodec_derive::{Decode, Encode, View};
+pub use ax_codec_core::*;
+pub use ax_codec_derive::{Decode, Encode, View};
 
 #[cfg(feature = "net")]
-pub use axcodec_net as net;
+pub use ax_codec_net as net;

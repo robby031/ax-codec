@@ -1,13 +1,13 @@
-# AxCodec Structure
+# ax_codec Structure
 
 ## Crate Layout
 
-### axcodec-core
+### ax_codec-core
 
 Core library with traits and implementations.
 
 ```
-axcodec-core/src/
+ax_codec-core/src/
 ├── lib.rs          # Core traits: Encode, Decode, View, BufferReader, BufferWriter
 ├── varint.rs       # Varint encoding/decoding (LEB128)
 ├── buffer.rs       # I/O abstractions: SliceReader, VecWriter, PooledVecWriter
@@ -20,52 +20,52 @@ axcodec-core/src/
 └── bytes_impl.rs   # bytes::Bytes integration (optional, bytes feature)
 ```
 
-### axcodec-derive
+### ax_codec-derive
 
 Proc macro crate for derive macros.
 
 ```
-axcodec-derive/src/
+ax_codec-derive/src/
 └── lib.rs          # #[derive(Encode, Decode, View)] implementations
 ```
 
-### axcodec-bytes
+### ax_codec-bytes
 
 Optional crate for byte container optimizations.
 
 ```
-axcodec-bytes/src/
+ax_codec-bytes/src/
 ├── lib.rs
 ├── bytes_impl.rs
 ├── pool.rs
 └── smallvec_impl.rs
 ```
 
-### axcodec-net
+### ax_codec-net
 
 Optional crate for networking (Tokio integration).
 
 ```
-axcodec-net/src/
+ax_codec-net/src/
 ├── lib.rs
-├── codec.rs        # AxCodec<T> for tokio_util::codec
+├── codec.rs        # ax_codec<T> for tokio_util::codec
 └── framed.rs       # Frame encoder/decoder
 ```
 
 ## Feature Flags
 
-| Feature | Description | Default |
-|---------|-------------|---------|
-| `std` | std::io adapters, Error: std::error::Error | No |
-| `simd` | SSE/AVX2 varint fast-path (x86_64) | No |
-| `crc32` | CRC32 checksum helpers | No |
-| `bytes` | bytes::Bytes integration | No |
-| `derive` | #[derive(Encode, Decode, View)] | No |
+| Feature  | Description                                | Default |
+| -------- | ------------------------------------------ | ------- |
+| `std`    | std::io adapters, Error: std::error::Error | No      |
+| `simd`   | SSE/AVX2 varint fast-path (x86_64)         | No      |
+| `crc32`  | CRC32 checksum helpers                     | No      |
+| `bytes`  | bytes::Bytes integration                   | No      |
+| `derive` | #[derive(Encode, Decode, View)]            | No      |
 
 ## Module Hierarchy
 
 ```
-axcodec
+ax_codec
 ├── core
 │   ├── traits (Encode, Decode, View, BufferReader, BufferWriter)
 │   ├── varint (encode_uvarint, decode_uvarint, encode_svarint, decode_svarint)

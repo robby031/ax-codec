@@ -1,8 +1,8 @@
-# AxCodec Philosophy
+# ax_codec Philosophy
 
 ## Predictable First
 
-AxCodec is built with "predictable" as the top priority.
+ax_codec is built with "predictable" as the top priority.
 
 - **No hidden allocation**: Users know exactly when allocation happens
 - **No magic**: No auto-optimization that makes behavior surprising
@@ -37,5 +37,5 @@ Avoid generic labyrinth. Prefer concrete types and macro-generated code.
 Designed for networking from the ground up.
 
 - **Varint length-prefix**: Streaming friendly
-- **Framed transport**: Built-in support in `axcodec-net`
+- **Framed transport**: Built-in support in `ax_codec-net`
 - **Backpressure safe**: Async decoder with partial parsing

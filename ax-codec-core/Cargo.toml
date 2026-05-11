@@ -1,0 +1,51 @@
+[package]
+name = "ax_codec-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+description = "Low-level binary codec primitives for ax_codec"
+keywords = ["codec", "binary", "serialization", "no_std"]
+categories = ["encoding", "no-std"]
+
+[features]
+default = ["std"]
+std = ["alloc"]
+alloc = []
+simd = []
+axhash = ["dep:axhash-map"]
+crc32 = ["alloc", "dep:crc32fast"]
+bytes = ["alloc", "dep:bytes"]
+dhat-heap = ["dhat"]
+jemalloc = ["tikv-jemallocator", "tikv-jemalloc-ctl"]
+
+[dependencies]
+axhash-map = { version = "0.1.2", optional = true }
+bytes = { version = "1.11", optional = true }
+crc32fast = { version = "1.4", optional = true }
+dhat = { version = "0.3", optional = true }
+tikv-jemallocator = { version = "0.6", optional = true }
+tikv-jemalloc-ctl = { version = "0.6", optional = true, features = ["stats"] }
+
+[dev-dependencies]
+ax_codec-derive = { path = "../ax_codec-derive" }
+criterion = { version = "0.5" }
+rand = { version = "0.8" }
+
+[[bench]]
+name = "varint_bench"
+harness = false
+
+[[bench]]
+name = "struct_bench"
+harness = false
+
+[[bench]]
+name = "vec_u8_bench"
+harness = false
+
+[[bench]]
+name = "comprehensive_bench"
+harness = false

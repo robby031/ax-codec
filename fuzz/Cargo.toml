@@ -1,5 +1,5 @@
 [package]
-name = "axcodec-fuzz"
+name = "ax_codec-fuzz"
 version = "0.0.0"
 publish = false
 edition = "2021"
@@ -11,8 +11,8 @@ cargo-fuzz = true
 
 [dependencies]
 libfuzzer-sys = "0.4"
-axcodec-core = { path = "../axcodec-core" }
-axcodec-derive = { path = "../axcodec-derive" }
+ax_codec-core = { path = "../ax_codec-core" }
+ax_codec-derive = { path = "../ax_codec-derive" }
 
 [[bin]]
 name = "fuzz_varint"

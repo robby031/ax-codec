@@ -21,7 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        features: ["--all-features", "--no-default-features", "--features alloc"]
+        features:
+          ["--all-features", "--no-default-features", "--features alloc"]
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -52,4 +53,4 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: thumbv7em-none-eabihf
-      - run: cargo check --target thumbv7em-none-eabihf --no-default-features --features alloc -p axcodec-core
+      - run: cargo check --target thumbv7em-none-eabihf --no-default-features --features alloc -p ax_codec-core

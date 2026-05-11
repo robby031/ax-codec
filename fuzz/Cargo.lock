@@ -9,11 +9,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3d036a3c4ab069c7b410a2ce876bd74808d2d0888a82667669f8e783a898bf1"
 
 [[package]]
-name = "axcodec-core"
+name = "ax_codec-core"
 version = "0.1.0"
 
 [[package]]
-name = "axcodec-derive"
+name = "ax_codec-derive"
 version = "0.1.0"
 dependencies = [
  "proc-macro2",
@@ -22,11 +22,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "axcodec-fuzz"
+name = "ax_codec-fuzz"
 version = "0.0.0"
 dependencies = [
- "axcodec-core",
- "axcodec-derive",
+ "ax_codec-core",
+ "ax_codec-derive",
  "libfuzzer-sys",
 ]
 

@@ -1,0 +1,19 @@
+[package]
+name = "ax_codec-derive"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+description = "Derive macros for ax_codec"
+keywords = ["codec", "binary", "derive", "macro"]
+categories = ["encoding"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1"
+quote = "1"
+syn = { version = "2", features = ["full"] }

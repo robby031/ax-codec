@@ -1,4 +1,4 @@
-use axcodec::{
+use ax_codec::{
     BufferReader, Decode, Encode, Validate, View,
     buffer::{SliceReader, VecWriter},
 };

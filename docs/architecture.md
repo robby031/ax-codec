@@ -1,8 +1,8 @@
-# AxCodec Architecture
+# ax_codec Architecture
 
 ## Goals
 
-AxCodec is a modern binary codec with focus on:
+ax_codec is a modern binary codec with focus on:
 
 - Predictable runtime
 - Minimal allocation
@@ -15,6 +15,7 @@ AxCodec is a modern binary codec with focus on:
 - Borrow-based decoding
 
 Targets:
+
 - backend
 - networking
 - cache
@@ -31,16 +32,19 @@ Targets:
 DON'T serialize memory layout directly.
 
 Bad:
+
 ```text
 struct memory -> bytes
 ```
 
 Good:
+
 ```text
 [field tag][length][payload]
 ```
 
 Advantages:
+
 - portable
 - stable
 - endian-safe
@@ -50,11 +54,12 @@ Advantages:
 
 ## Design Layers
 
-### 1. axcodec-core
+### 1. ax_codec-core
 
 Pure low-level primitives.
 
 Contents:
+
 - varint
 - endian encode/decode
 - buffer writer
@@ -66,6 +71,7 @@ Contents:
 No alloc.
 
 Traits:
+
 ```rust
 Encode
 Decode
@@ -74,11 +80,12 @@ View
 
 ---
 
-### 2. axcodec-bytes
+### 2. ax_codec-bytes
 
 Optimized byte containers.
 
 Features:
+
 - SmallVec support
 - Bytes support
 - reusable buffers
@@ -89,11 +96,12 @@ minimize allocation churn.
 
 ---
 
-### 3. axcodec-derive
+### 3. ax_codec-derive
 
 Macro derive.
 
 Example:
+
 ```rust
 #[derive(Encode, Decode, View)]
 struct User {
@@ -103,17 +111,19 @@ struct User {
 ```
 
 Generated code must be:
+
 - inline-friendly
 - branch-light
 - predictable
 
 ---
 
-### 4. axcodec-net
+### 4. ax_codec-net
 
 Networking layer.
 
 Features:
+
 - framed transport
 - async stream decoder
 - partial packet parsing
@@ -128,10 +138,12 @@ Tokio optional.
 ### Integer Encoding
 
 Default:
+
 - unsigned varint
 - zigzag signed integer
 
 Example:
+
 ```text
 1      -> 01
 127    -> 7f
@@ -145,11 +157,13 @@ SIMD fast-path optional for later.
 ### String Encoding
 
 Format:
+
 ```text
 [length varint][utf8 bytes]
 ```
 
 Borrow decode:
+
 ```rust
 &'a str
 ```
@@ -161,11 +175,13 @@ No allocation if source buffer is still alive.
 ### Slice Encoding
 
 Format:
+
 ```text
 [length][bytes]
 ```
 
 Borrow decode:
+
 ```rust
 &'a [u8]
 ```
@@ -177,6 +193,7 @@ Borrow decode:
 THIS is the key.
 
 Use `View<'a>` trait:
+
 ```rust
 struct Packet<'a> {
     opcode: u16,
@@ -185,6 +202,7 @@ struct Packet<'a> {
 ```
 
 Benefit:
+
 - zero-copy practical
 - simple lifetime model
 - predictable
@@ -197,18 +215,19 @@ Benefit:
 ### Default Rule
 
 Decode:
+
 - avoid alloc if possible
 - borrow first
 - alloc fallback
 
 Examples:
 
-| Type | Strategy |
-|---|---|
-| &str | borrow |
-| &[u8] | borrow |
-| Vec<T> | alloc |
-| String | alloc |
+| Type         | Strategy |
+| ------------ | -------- |
+| &str         | borrow   |
+| &[u8]        | borrow   |
+| Vec<T>       | alloc    |
+| String       | alloc    |
 | Cow<'a, str> | adaptive |
 
 ---
@@ -218,11 +237,13 @@ Examples:
 Optional feature.
 
 Purpose:
+
 - reduce allocator contention
 - batch packet decode
 - temporary object graphs
 
 Example:
+
 ```rust
 decode_in_arena(...)
 ```
@@ -236,12 +257,14 @@ Arena is not a mandatory core dependency.
 ### Unsafe Rules
 
 Unsafe only allowed for:
+
 - unchecked reads
 - SIMD
 - branchless decode
 - memcpy optimization
 
 All unsafe:
+
 - isolated
 - documented
 - fuzz-tested
@@ -271,12 +294,14 @@ NO giant generic error chains.
 Mandatory protection.
 
 Features:
+
 - max allocation
 - max depth
 - max string size
 - max vec length
 
 Prevent:
+
 - OOM
 - DOS payload
 - recursive bombs
@@ -316,6 +341,7 @@ No giant temporary allocations.
 ## no_std Support
 
 Core crate:
+
 - no_std
 - alloc optional
 
@@ -340,11 +366,11 @@ Don't sacrifice maintainability for absurd microbenchmarks.
 ## Recommended Internal Layout
 
 ```text
-axcodec/
- ├── axcodec-core/
- ├── axcodec-derive/
- ├── axcodec-bytes/
- ├── axcodec-net/
+ax_codec/
+ ├── ax_codec-core/
+ ├── ax_codec-derive/
+ ├── ax_codec-bytes/
+ ├── ax_codec-net/
  ├── benches/
  ├── fuzz/
  └── tests/
@@ -355,12 +381,14 @@ axcodec/
 ## Benchmark Targets
 
 Compare against:
+
 - bincode
 - postcard
 - prost
 - rkyv
 
 Metrics:
+
 - encode ns/op
 - decode ns/op
 - allocations/op
@@ -372,7 +400,8 @@ Metrics:
 
 ## Important Non-Goals
 
-AxCodec is NOT:
+ax_codec is NOT:
+
 - reflection runtime
 - schema registry monster
 - archived memory graph engine
@@ -380,6 +409,7 @@ AxCodec is NOT:
 - magical compile-time VM
 
 Keep it:
+
 - small
 - understandable
 - predictable
@@ -388,7 +418,7 @@ Keep it:
 
 ## Ideal Identity
 
-AxCodec should feel like:
+ax_codec should feel like:
 
 - Simplicity: encode → bytes → decode/view
 - Predictable: no hidden allocation, no magic
@@ -396,6 +426,7 @@ AxCodec should feel like:
 - Modern: arena support, SIMD optional, async-ready
 
 Not:
+
 - Generic labyrinth
 - Type-level computation engine
 - Reflection runtime

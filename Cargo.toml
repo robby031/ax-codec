@@ -2,10 +2,10 @@
 resolver = "3"
 members = [
     ".",
-    "axcodec-core",
-    "axcodec-derive",
-    "axcodec-bytes",
-    "axcodec-net",
+    "ax_codec-core",
+    "ax_codec-derive",
+    "ax_codec-bytes",
+    "ax_codec-net",
 ]
 
 [workspace.package]
@@ -21,30 +21,30 @@ keywords = ["serialization", "binary", "codec", "zero-copy", "no_std"]
 categories = ["encoding", "no-std", "network-programming", "data-structures"]
 
 [workspace.dependencies]
-axcodec-core = { path = "axcodec-core", version = "0.1.0" }
-axcodec-bytes = { path = "axcodec-bytes", version = "0.1.0" }
-axcodec-derive = { path = "axcodec-derive", version = "0.1.0" }
-axcodec-net = { path = "axcodec-net", version = "0.1.0" }
+ax_codec-core = { path = "ax_codec-core", version = "0.1.0" }
+ax_codec-bytes = { path = "ax_codec-bytes", version = "0.1.0" }
+ax_codec-derive = { path = "ax_codec-derive", version = "0.1.0" }
+ax_codec-net = { path = "ax_codec-net", version = "0.1.0" }
 
 [package]
-name = "axcodec"
+name = "ax_codec"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 rust-version.workspace = true
-description = "Meta crate for AxCodec"
+description = "Meta crate for ax_codec"
 
 [dependencies]
-axcodec-core = { workspace = true }
-axcodec-derive = { workspace = true }
-axcodec-bytes = { workspace = true }
-axcodec-net = { workspace = true, optional = true }
+ax_codec-core = { workspace = true }
+ax_codec-derive = { workspace = true }
+ax_codec-bytes = { workspace = true }
+ax_codec-net = { workspace = true, optional = true }
 
 [features]
 default = ["std"]
-std = ["axcodec-core/std", "axcodec-bytes/std", "axcodec-net?/std"]
-alloc = ["axcodec-core/alloc"]
-net = ["dep:axcodec-net"]
-tokio-codec = ["net", "axcodec-net/tokio-codec"]
-simd = ["axcodec-core/simd"]
+std = ["ax_codec-core/std", "ax_codec-bytes/std", "ax_codec-net?/std"]
+alloc = ["ax_codec-core/alloc"]
+net = ["dep:ax_codec-net"]
+tokio-codec = ["net", "ax_codec-net/tokio-codec"]
+simd = ["ax_codec-core/simd"]

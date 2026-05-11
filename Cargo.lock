@@ -45,6 +45,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
+name = "ax-codec"
+version = "0.1.0"
+dependencies = [
+ "ax-codec-bytes",
+ "ax-codec-core",
+ "ax-codec-derive",
+ "ax-codec-net",
+]
+
+[[package]]
 name = "ax-codec-bytes"
 version = "0.1.0"
 dependencies = [
@@ -88,16 +98,6 @@ dependencies = [
  "futures",
  "tokio",
  "tokio-util",
-]
-
-[[package]]
-name = "ax_codec"
-version = "0.1.0"
-dependencies = [
- "ax-codec-bytes",
- "ax-codec-core",
- "ax-codec-derive",
- "ax-codec-net",
 ]
 
 [[package]]

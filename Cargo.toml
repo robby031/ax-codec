@@ -27,7 +27,7 @@ ax-codec-derive = { path = "ax-codec-derive", version = "0.1.0" }
 ax-codec-net = { path = "ax-codec-net", version = "0.1.0" }
 
 [package]
-name = "ax_codec"
+name = "ax-codec"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true

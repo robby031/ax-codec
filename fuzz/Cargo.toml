@@ -1,0 +1,27 @@
+[package]
+name = "axcodec-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[workspace]
+
+[dependencies]
+libfuzzer-sys = "0.4"
+axcodec-core = { path = "../axcodec-core" }
+axcodec-derive = { path = "../axcodec-derive" }
+
+[[bin]]
+name = "fuzz_varint"
+path = "fuzz_targets/varint.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "fuzz_struct_decode"
+path = "fuzz_targets/struct_decode.rs"
+test = false
+doc = false

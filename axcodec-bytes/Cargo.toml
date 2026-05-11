@@ -1,0 +1,25 @@
+[package]
+name = "axcodec-bytes"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+description = "Optimized byte containers for AxCodec"
+keywords = ["codec", "binary", "bytes", "buffer"]
+categories = ["encoding"]
+
+[features]
+default = ["std", "bytes"]
+std = ["axcodec-core/std", "alloc"]
+alloc = ["axcodec-core/alloc"]
+bytes = ["dep:bytes"]
+smallvec = ["dep:smallvec"]
+
+[dependencies]
+axcodec-core = { workspace = true }
+bytes = { version = "1", optional = true }
+smallvec = { version = "1", optional = true }
+
+[dev-dependencies]

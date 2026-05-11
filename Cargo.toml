@@ -1,0 +1,50 @@
+[workspace]
+resolver = "3"
+members = [
+    ".",
+    "axcodec-core",
+    "axcodec-derive",
+    "axcodec-bytes",
+    "axcodec-net",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+authors = ["Bagus Dwi Harianto robbymangkualam2000@gmail.com"]
+license = "MIT"
+repository = "https://github.com/robby031/ax-codec"
+description = "A Rust binary codec with predictable runtime**, minimal allocation, and zero-copy decoding."
+readme = "README.md"
+rust-version = "1.85"
+keywords = ["serialization", "binary", "codec", "zero-copy", "no_std"]
+categories = ["encoding", "no-std", "network-programming", "data-structures"]
+
+[workspace.dependencies]
+axcodec-core = { path = "axcodec-core", version = "0.1.0" }
+axcodec-bytes = { path = "axcodec-bytes", version = "0.1.0" }
+axcodec-derive = { path = "axcodec-derive", version = "0.1.0" }
+axcodec-net = { path = "axcodec-net", version = "0.1.0" }
+
+[package]
+name = "axcodec"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Meta crate for AxCodec"
+
+[dependencies]
+axcodec-core = { workspace = true }
+axcodec-derive = { workspace = true }
+axcodec-bytes = { workspace = true }
+axcodec-net = { workspace = true, optional = true }
+
+[features]
+default = ["std"]
+std = ["axcodec-core/std", "axcodec-bytes/std", "axcodec-net?/std"]
+alloc = ["axcodec-core/alloc"]
+net = ["dep:axcodec-net"]
+tokio-codec = ["net", "axcodec-net/tokio-codec"]
+simd = ["axcodec-core/simd"]

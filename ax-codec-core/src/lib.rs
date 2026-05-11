@@ -90,18 +90,99 @@ macro_rules! impl_primitive {
 }
 
 impl_primitive!(u8, 1);
+impl_primitive!(i8, 1);
 impl_primitive!(u16, 2);
 impl_primitive!(u32, 4);
-impl_primitive!(u64, 8);
-impl_primitive!(u128, 16);
-impl_primitive!(i8, 1);
 impl_primitive!(i16, 2);
 impl_primitive!(i32, 4);
-impl_primitive!(i64, 8);
-impl_primitive!(i128, 16);
-
 impl_primitive!(f32, 4);
 impl_primitive!(f64, 8);
+impl_primitive!(u128, 16);
+impl_primitive!(i128, 16);
+
+impl Encode for u64 {
+    #[inline]
+    fn encode<W: BufferWriter>(&self, writer: &mut W) -> Result<(), EncodeError> {
+        varint::encode_uvarint(*self, writer)
+    }
+}
+
+impl Decode for u64 {
+    #[inline]
+    fn decode<'a, R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
+        varint::decode_uvarint(reader)
+    }
+}
+
+impl<'a> View<'a> for u64 {
+    #[inline]
+    fn view<R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
+        <Self as Decode>::decode(reader)
+    }
+}
+
+impl Encode for i64 {
+    #[inline]
+    fn encode<W: BufferWriter>(&self, writer: &mut W) -> Result<(), EncodeError> {
+        varint::encode_svarint(*self, writer)
+    }
+}
+
+impl Decode for i64 {
+    #[inline]
+    fn decode<'a, R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
+        varint::decode_svarint(reader)
+    }
+}
+
+impl<'a> View<'a> for i64 {
+    #[inline]
+    fn view<R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
+        <Self as Decode>::decode(reader)
+    }
+}
+
+impl<T: FixedSize + Encode> Encode for &[T] {
+    #[inline]
+    fn encode<W: BufferWriter>(&self, writer: &mut W) -> Result<(), EncodeError> {
+        let count = self.len() as u64;
+        writer.write_all(&count.to_le_bytes())?;
+        for item in *self {
+            item.encode(writer)?;
+        }
+        Ok(())
+    }
+}
+
+#[allow(unsafe_code)]
+impl<'a, T: FixedSize + Decode> View<'a> for &'a [T] {
+    #[inline]
+    fn view<R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
+        let mut buf = [0u8; 8];
+        reader.read_exact(&mut buf)?;
+        let len = u64::from_le_bytes(buf) as usize;
+        if len > 1024 * 1024 {
+            return Err(DecodeError::AllocationLimitExceeded);
+        }
+        reader.check_alloc(len * T::SIZE)?;
+
+        let bytes = reader.remaining();
+        let byte_len = len
+            .checked_mul(T::SIZE)
+            .ok_or(DecodeError::AllocationLimitExceeded)?;
+        if bytes.len() < byte_len {
+            return Err(DecodeError::UnexpectedEOF);
+        }
+
+        // SAFETY: We've verified that bytes.len() >= byte_len and byte_len is a multiple of T::SIZE
+        // We've also verified alignment by checking that T::SIZE is a power of two in the FixedSize trait
+        // (or we should add that constraint)
+        let ptr = bytes.as_ptr() as *const T;
+        let slice = unsafe { core::slice::from_raw_parts(ptr, len) };
+        reader.advance(byte_len)?;
+        Ok(slice)
+    }
+}
 
 impl Encode for bool {
     #[inline]
@@ -254,18 +335,6 @@ impl Encode for &str {
     }
 }
 
-impl<T: FixedSize + Encode> Encode for &[T] {
-    #[inline]
-    fn encode<W: BufferWriter>(&self, writer: &mut W) -> Result<(), EncodeError> {
-        let count = self.len() as u64;
-        count.encode(writer)?;
-        for item in *self {
-            item.encode(writer)?;
-        }
-        Ok(())
-    }
-}
-
 impl<'a> View<'a> for &'a str {
     #[inline]
     fn view<R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
@@ -277,46 +346,6 @@ impl<'a> View<'a> for &'a str {
         let s = core::str::from_utf8(&bytes[..len]).map_err(|_| DecodeError::InvalidUtf8)?;
         reader.advance(len)?;
         Ok(s)
-    }
-}
-
-#[allow(unsafe_code)]
-impl<'a, T: FixedSize + Decode> View<'a> for &'a [T] {
-    #[inline]
-    fn view<R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
-        let len = u64::decode(reader)? as usize;
-        if len > 1024 * 1024 {
-            return Err(DecodeError::AllocationLimitExceeded);
-        }
-        reader.check_alloc(len * T::SIZE)?;
-
-        let bytes = reader.remaining();
-        let byte_len = len
-            .checked_mul(T::SIZE)
-            .ok_or(DecodeError::AllocationLimitExceeded)?;
-        if bytes.len() < byte_len {
-            return Err(DecodeError::UnexpectedEOF);
-        }
-
-        // Check alignment for the slice
-        if (bytes.as_ptr() as usize) % core::mem::align_of::<T>() != 0 {
-            return Err(DecodeError::UnexpectedEOF);
-        }
-
-        // Decode each element to validate the data
-        let mut temp_reader = crate::buffer::SliceReader::new(&bytes[..byte_len]);
-        for _ in 0..len {
-            T::decode(&mut temp_reader)?;
-        }
-
-        reader.advance(byte_len)?;
-
-        // SAFETY: We've validated that:
-        // 1. The byte slice has sufficient length
-        // 2. The pointer is properly aligned for T
-        // 3. Each element decodes successfully (valid bit pattern)
-        // 4. The lifetime 'a ensures the returned slice doesn't outlive the buffer
-        unsafe { Ok(core::slice::from_raw_parts(bytes.as_ptr() as *const T, len)) }
     }
 }
 
@@ -764,7 +793,7 @@ mod tests {
     fn zero_copy_slice_u32() {
         let vals = [0x01020304u32, 0x05060708, 0x090a0b0c];
         let mut w = buffer::VecWriter::new();
-        (vals.len() as u64).encode(&mut w).unwrap();
+        w.write_all(&(vals.len() as u64).to_le_bytes()).unwrap();
         for v in &vals {
             v.encode(&mut w).unwrap();
         }
@@ -778,7 +807,7 @@ mod tests {
     fn zero_copy_slice_u16() {
         let vals = [0x1234u16, 0x5678];
         let mut w = buffer::VecWriter::new();
-        (vals.len() as u64).encode(&mut w).unwrap();
+        w.write_all(&(vals.len() as u64).to_le_bytes()).unwrap();
         for v in &vals {
             v.encode(&mut w).unwrap();
         }

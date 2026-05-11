@@ -13,12 +13,12 @@ echo ""
 echo "--- Compile Time ---"
 echo "Clean build (debug):"
 cd "$ROOT_DIR"
-cargo clean
+cargo clean || echo "  (cargo clean failed, continuing...)"
 time cargo build --all-features --workspace 2>&1 | tail -1 || true
 
 echo ""
 echo "Clean build (release):"
-cargo clean
+cargo clean || echo "  (cargo clean failed, continuing...)"
 time cargo build --all-features --workspace --release 2>&1 | tail -1 || true
 
 echo ""

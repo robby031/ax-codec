@@ -5,10 +5,11 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 rust-version.workspace = true
+readme.workspace = true
 
 description = "Networking layer for ax_codec"
-keywords = ["codec", "binary", "network", "async"]
-categories = ["encoding", "network-programming"]
+keywords = ["serialization", "binary", "codec", "zero-copy", "no_std"]
+categories = ["encoding", "no-std", "network-programming", "data-structures"]
 
 [features]
 default = ["std"]

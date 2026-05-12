@@ -21,10 +21,10 @@ keywords = ["serialization", "binary", "codec", "zero-copy", "no_std"]
 categories = ["encoding", "no-std", "network-programming", "data-structures"]
 
 [workspace.dependencies]
-ax-codec-core = { path = "ax-codec-core", version = "0.1.0" }
-ax-codec-bytes = { path = "ax-codec-bytes", version = "0.1.0" }
-ax-codec-derive = { path = "ax-codec-derive", version = "0.1.0" }
-ax-codec-net = { path = "ax-codec-net", version = "0.1.0" }
+ax-codec-core = { path = "ax-codec-core", version = "0.1.4" }
+ax-codec-bytes = { path = "ax-codec-bytes", version = "0.1.4" }
+ax-codec-derive = { path = "ax-codec-derive", version = "0.1.4" }
+ax-codec-net = { path = "ax-codec-net", version = "0.1.4" }
 
 [package]
 name = "ax-codec"

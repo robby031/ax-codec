@@ -5,11 +5,11 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 rust-version.workspace = true
-readme.workspace = true
+readme = "README.md"
 
-description = "Networking layer for ax_codec"
-keywords = ["serialization", "binary", "codec", "zero-copy", "no_std"]
-categories = ["encoding", "no-std", "network-programming", "data-structures"]
+description = "Network utilities and Tokio codec integration for framed message encoding and decoding"
+keywords = ["serialization", "binary", "codec", "network", "tokio", "framed"]
+categories = ["encoding", "network-programming", "asynchronous", "no-std"]
 
 [features]
 default = ["std"]

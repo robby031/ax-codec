@@ -6,6 +6,7 @@ pub struct DecodeLimits {
     pub max_depth: u16,
     pub max_string_len: usize,
     pub max_vec_len: usize,
+    pub max_slice_len: usize,
 }
 
 impl Default for DecodeLimits {
@@ -13,8 +14,9 @@ impl Default for DecodeLimits {
         Self {
             max_alloc: 16 * 1024 * 1024, // 16 MiB
             max_depth: 256,
-            max_string_len: 4 * 1024 * 1024, // 4 MiB
-            max_vec_len: 1024 * 1024,        // 1M items
+            max_string_len: 16 * 1024 * 1024, // 16 MiB
+            max_vec_len: 1024 * 1024,         // 1M items
+            max_slice_len: 1024 * 1024,       // 1M items
         }
     }
 }
@@ -26,6 +28,7 @@ impl DecodeLimits {
             max_depth: u16::MAX,
             max_string_len: usize::MAX,
             max_vec_len: usize::MAX,
+            max_slice_len: usize::MAX,
         }
     }
 
@@ -35,6 +38,7 @@ impl DecodeLimits {
             max_depth: 32,
             max_string_len: 4096,
             max_vec_len: 4096,
+            max_slice_len: 4096,
         }
     }
 }
@@ -57,7 +61,7 @@ impl DecodeContext {
 
     #[inline]
     pub fn check_alloc(&mut self, n: usize) -> Result<(), DecodeError> {
-        if n > self.limits.max_alloc - self.alloc_used {
+        if n > self.limits.max_alloc {
             return Err(DecodeError::AllocationLimitExceeded);
         }
         self.alloc_used += n;
@@ -151,6 +155,21 @@ impl<'a, R: BufferReader<'a>> BufferReader<'a> for LimitedReader<'a, R> {
     #[inline]
     fn depth_exit(&mut self) {
         self.ctx.depth_exit()
+    }
+
+    #[inline]
+    fn max_slice_len(&self) -> usize {
+        self.ctx.limits.max_slice_len
+    }
+
+    #[inline]
+    fn max_string_len(&self) -> usize {
+        self.ctx.limits.max_string_len
+    }
+
+    #[inline]
+    fn max_vec_len(&self) -> usize {
+        self.ctx.limits.max_vec_len
     }
 }
 

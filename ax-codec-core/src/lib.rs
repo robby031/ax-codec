@@ -161,23 +161,36 @@ impl<'a, T: FixedSize + Decode> View<'a> for &'a [T] {
         let mut buf = [0u8; 8];
         reader.read_exact(&mut buf)?;
         let len = u64::from_le_bytes(buf) as usize;
-        if len > 1024 * 1024 {
-            return Err(DecodeError::AllocationLimitExceeded);
-        }
-        reader.check_alloc(len * T::SIZE)?;
 
         let bytes = reader.remaining();
+        // Check for overflow first, before any other checks
         let byte_len = len
             .checked_mul(T::SIZE)
             .ok_or(DecodeError::AllocationLimitExceeded)?;
+
+        // Now check the limit with the safe byte_len value
+        if len > reader.max_slice_len() {
+            return Err(DecodeError::AllocationLimitExceeded);
+        }
+
         if bytes.len() < byte_len {
             return Err(DecodeError::UnexpectedEOF);
         }
 
-        // SAFETY: We've verified that bytes.len() >= byte_len and byte_len is a multiple of T::SIZE
-        // We've also verified alignment by checking that T::SIZE is a power of two in the FixedSize trait
-        // (or we should add that constraint)
-        let ptr = bytes.as_ptr() as *const T;
+        reader.check_alloc(byte_len)?;
+
+        // SAFETY: We verify that the pointer is properly aligned for T
+        let ptr = bytes.as_ptr();
+        let align = core::mem::align_of::<T>();
+        if (ptr as usize) % align != 0 {
+            return Err(DecodeError::UnexpectedEOF);
+        }
+
+        // SAFETY:
+        // - bytes.len() >= byte_len (verified above)
+        // - byte_len is a multiple of T::SIZE (verified by checked_mul)
+        // - ptr is aligned for T (verified above)
+        let ptr = ptr as *const T;
         let slice = unsafe { core::slice::from_raw_parts(ptr, len) };
         reader.advance(byte_len)?;
         Ok(slice)
@@ -275,6 +288,21 @@ pub trait BufferReader<'a> {
 
     #[inline]
     fn depth_exit(&mut self) {}
+
+    #[inline]
+    fn max_slice_len(&self) -> usize {
+        1024 * 1024 // Default limit
+    }
+
+    #[inline]
+    fn max_string_len(&self) -> usize {
+        16 * 1024 * 1024 // Default limit
+    }
+
+    #[inline]
+    fn max_vec_len(&self) -> usize {
+        1024 * 1024 // Default limit
+    }
 }
 
 #[cfg(feature = "alloc")]
@@ -291,7 +319,7 @@ impl Decode for alloc::string::String {
     #[inline]
     fn decode<'a, R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
         let len = varint::decode_uvarint(reader)? as usize;
-        if len > 16 * 1024 * 1024 {
+        if len > reader.max_string_len() {
             return Err(DecodeError::AllocationLimitExceeded);
         }
         reader.check_alloc(len)?;
@@ -312,7 +340,7 @@ impl<'a> Validate<'a> for alloc::string::String {
     fn validate<R: BufferReader<'a>>(reader: &mut R) -> Result<(), ValidateError> {
         let len =
             varint::decode_uvarint(reader).map_err(|_| ValidateError::InvalidVarint)? as usize;
-        if len > 16 * 1024 * 1024 {
+        if len > reader.max_string_len() {
             return Err(ValidateError::AllocationLimitExceeded);
         }
         let bytes = reader.remaining();
@@ -354,7 +382,7 @@ impl<T: Decode> Decode for alloc::vec::Vec<T> {
     #[inline]
     fn decode<'a, R: BufferReader<'a>>(reader: &mut R) -> Result<Self, DecodeError> {
         let len = varint::decode_uvarint(reader)? as usize;
-        if len > 1024 * 1024 {
+        if len > reader.max_vec_len() {
             return Err(DecodeError::AllocationLimitExceeded);
         }
         reader.check_alloc(len)?;
@@ -372,7 +400,7 @@ pub fn decode_vec_u8<'a, R: BufferReader<'a>>(
     reader: &mut R,
 ) -> Result<alloc::vec::Vec<u8>, DecodeError> {
     let len = varint::decode_uvarint(reader)? as usize;
-    if len > 1024 * 1024 {
+    if len > reader.max_vec_len() {
         return Err(DecodeError::AllocationLimitExceeded);
     }
     reader.check_alloc(len)?;
@@ -394,7 +422,7 @@ impl<'a, T: Validate<'a>> Validate<'a> for alloc::vec::Vec<T> {
     fn validate<R: BufferReader<'a>>(reader: &mut R) -> Result<(), ValidateError> {
         let len =
             varint::decode_uvarint(reader).map_err(|_| ValidateError::InvalidVarint)? as usize;
-        if len > 1024 * 1024 {
+        if len > reader.max_vec_len() {
             return Err(ValidateError::AllocationLimitExceeded);
         }
         for _ in 0..len {
@@ -520,7 +548,7 @@ impl<K: Decode + Eq + core::hash::Hash, V: Decode> Decode for axhash_map::HashMa
     #[inline]
     fn decode<'__b, R: BufferReader<'__b>>(reader: &mut R) -> Result<Self, DecodeError> {
         let len = varint::decode_uvarint(reader)? as usize;
-        if len > 1024 * 1024 {
+        if len > reader.max_vec_len() {
             return Err(DecodeError::AllocationLimitExceeded);
         }
         let mut map = axhash_map::HashMap::default();
@@ -540,7 +568,7 @@ impl<'a, K: Validate<'a>, V: Validate<'a>> Validate<'a> for axhash_map::HashMap<
     fn validate<R: BufferReader<'a>>(reader: &mut R) -> Result<(), ValidateError> {
         let len =
             varint::decode_uvarint(reader).map_err(|_| ValidateError::InvalidVarint)? as usize;
-        if len > 1024 * 1024 {
+        if len > reader.max_vec_len() {
             return Err(ValidateError::AllocationLimitExceeded);
         }
         for _ in 0..len {
@@ -568,7 +596,7 @@ impl<T: Decode + Eq + core::hash::Hash> Decode for axhash_map::HashSet<T> {
     #[inline]
     fn decode<'__b, R: BufferReader<'__b>>(reader: &mut R) -> Result<Self, DecodeError> {
         let len = varint::decode_uvarint(reader)? as usize;
-        if len > 1024 * 1024 {
+        if len > reader.max_vec_len() {
             return Err(DecodeError::AllocationLimitExceeded);
         }
         let mut set = axhash_map::HashSet::default();
@@ -586,7 +614,7 @@ impl<'a, T: Validate<'a>> Validate<'a> for axhash_map::HashSet<T> {
     fn validate<R: BufferReader<'a>>(reader: &mut R) -> Result<(), ValidateError> {
         let len =
             varint::decode_uvarint(reader).map_err(|_| ValidateError::InvalidVarint)? as usize;
-        if len > 1024 * 1024 {
+        if len > reader.max_vec_len() {
             return Err(ValidateError::AllocationLimitExceeded);
         }
         for _ in 0..len {

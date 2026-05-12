@@ -5,11 +5,11 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 rust-version.workspace = true
-readme.workspace = true
+readme = "README.md"
 
-description = "Derive macros for ax_codec"
-keywords = ["serialization", "binary", "codec", "zero-copy", "no_std"]
-categories = ["encoding", "no-std", "network-programming", "data-structures"]
+description = "Procedural derive macros for automatic Encode, Decode, and View trait implementations"
+keywords = ["serialization", "binary", "codec", "derive", "macro", "procedural-macro"]
+categories = ["encoding", "development-tools", "development-tools::build-utils", "no-std"]
 
 [lib]
 proc-macro = true

@@ -33,21 +33,30 @@ impl BufferPool {
     }
 
     pub fn acquire(&self) -> Vec<u8> {
-        let mut free = self.free.lock().unwrap();
+        let mut free = self.free.lock().unwrap_or_else(|e| {
+            // If mutex is poisoned, we can still access the data by recovering from the poison
+            e.into_inner()
+        });
         free.pop()
             .unwrap_or_else(|| Vec::with_capacity(self.default_buf_size))
     }
 
     pub fn release(&self, mut buf: Vec<u8>) {
         buf.clear();
-        let mut free = self.free.lock().unwrap();
+        let mut free = self.free.lock().unwrap_or_else(|e| {
+            // If mutex is poisoned, we can still access the data by recovering from the poison
+            e.into_inner()
+        });
         if free.len() < self.max_capacity {
             free.push(buf);
         }
     }
 
     pub fn len(&self) -> usize {
-        self.free.lock().unwrap().len()
+        self.free.lock().unwrap_or_else(|e| {
+            // If mutex is poisoned, we can still access the data by recovering from the poison
+            e.into_inner()
+        }).len()
     }
 
     pub fn is_empty(&self) -> bool {

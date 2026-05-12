@@ -5,11 +5,11 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 rust-version.workspace = true
-readme.workspace = true
+readme = "README.md"
 
-description = "Optimized byte containers for ax_codec"
-keywords = ["serialization", "binary", "codec", "zero-copy", "no_std"]
-categories = ["encoding", "no-std", "network-programming", "data-structures"]
+description = "Buffer pooling and bytes crate integration for zero-copy operations and memory-efficient encoding"
+keywords = ["serialization", "binary", "codec", "zero-copy", "buffer-pool", "memory-management"]
+categories = ["encoding", "memory-management", "no-std", "data-structures"]
 
 [features]
 default = ["std", "bytes"]

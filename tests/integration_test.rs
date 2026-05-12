@@ -1,6 +1,7 @@
 use ax_codec::{
     BufferReader, Decode, Encode, Validate, View, SliceReader, VecWriter,
 };
+use ax_codec_derive::{Decode, Encode, View};
 
 #[derive(Debug, PartialEq, Eq, Encode, Decode, View)]
 struct SimpleStruct {

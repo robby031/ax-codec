@@ -1,4 +1,5 @@
 #![cfg_attr(not(feature = "std"), no_std)]
+
 pub use ax_codec_core::{
     Decode, Encode, Validate, View,
     BufferReader, BufferWriter,
@@ -9,7 +10,7 @@ pub use ax_codec_core::{
 pub use ax_codec_core::buffer::{
     VecWriter, SliceReader, PooledVecWriter, StackWriter,
 };
-pub use ax_codec_derive::{Decode, Encode, View};
+
 pub use ax_codec_core::limits;
 pub use ax_codec_core::varint;
 pub use ax_codec_core::version;

@@ -1,4 +1,5 @@
 use ax_codec::{View, VecWriter, SliceReader, varint};
+use ax_codec_derive::View;
 
 #[derive(Debug, Clone, PartialEq, View)]
 struct SimplePacket {

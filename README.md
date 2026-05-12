@@ -26,12 +26,14 @@ Add to your `Cargo.toml`:
 ```toml
 [dependencies]
 ax_codec = { version = "0.1", features = ["std"] }
+ax-codec-derive = "0.1"  # Required for derive macros
 ```
 
 ### Derive macros
 
 ```rust
 use ax_codec::{Encode, Decode, VecWriter};
+use ax_codec_derive::{Encode, Decode};
 
 #[derive(Encode, Decode)]
 struct Packet {
@@ -53,6 +55,7 @@ fn main() {
 
 ```rust
 use ax_codec::{Encode, Decode, View, VecWriter};
+use ax_codec_derive::{Encode, Decode, View};
 
 #[derive(Encode, Decode, View)]
 struct Message<'a> {
@@ -72,6 +75,7 @@ assert_eq!(decoded.text, "hello");
 
 ```rust
 use ax_codec::{Encode, Validate, VecWriter, SliceReader};
+use ax_codec_derive::{Encode, Decode};
 
 let packet = Packet { id: 42, payload: vec![1, 2, 3] };
 let mut w = VecWriter::new();
@@ -97,17 +101,19 @@ let framed = Framed::new(socket, ax_codec::<Packet>::new());
 
 ax-codec is organized as a workspace with the following crates:
 
-| Crate | Description | Documentation |
-|-------|-------------|---------------|
-| [ax-codec-core](./ax-codec-core/README.md) | Low-level binary codec primitives, traits, and utilities | [README](./ax-codec-core/README.md) |
+| Crate                                          | Description                                                                | Documentation                         |
+| ---------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------- |
+| [ax-codec-core](./ax-codec-core/README.md)     | Low-level binary codec primitives, traits, and utilities                   | [README](./ax-codec-core/README.md)   |
 | [ax-codec-derive](./ax-codec-derive/README.md) | Derive macros for automatic `Encode`, `Decode`, and `View` implementations | [README](./ax-codec-derive/README.md) |
-| [ax-codec-bytes](./ax-codec-bytes/README.md) | Buffer pooling and integration with `bytes` crate | [README](./ax-codec-bytes/README.md) |
-| [ax-codec-net](./ax-codec-net/README.md) | Network utilities and Tokio codec integration | [README](./ax-codec-net/README.md) |
+| [ax-codec-bytes](./ax-codec-bytes/README.md)   | Buffer pooling and integration with `bytes` crate                          | [README](./ax-codec-bytes/README.md)  |
+| [ax-codec-net](./ax-codec-net/README.md)       | Network utilities and Tokio codec integration                              | [README](./ax-codec-net/README.md)    |
 
 ### Crate Overview
 
 #### ax-codec-core
+
 The core library providing:
+
 - `Encode`, `Decode`, `View`, and `Validate` traits
 - Buffer abstractions (`VecWriter`, `SliceReader`, `PooledVecWriter`)
 - Varint encoding/decoding with SIMD optimization
@@ -115,20 +121,26 @@ The core library providing:
 - CRC32 checksums and versioned encoding
 
 #### ax-codec-derive
+
 Procedural macros for deriving codec traits:
+
 - `#[derive(Encode)]` - Automatic serialization
 - `#[derive(Decode)]` - Automatic deserialization
 - `#[derive(View)]` - Zero-copy deserialization
 - Field attributes: `#[ax_codec(skip)]`, `#[ax_codec(default)]`
 
 #### ax-codec-bytes
+
 Memory management utilities:
+
 - Thread-local buffer pooling
 - Integration with `bytes::Bytes` for zero-copy operations
 - `smallvec` integration for stack-allocated small vectors
 
 #### ax-codec-net
+
 Network communication utilities:
+
 - Framed message encoding/decoding
 - Tokio codec integration via `ax_codec<T>`
 - Write buffering for efficient IO
@@ -136,17 +148,17 @@ Network communication utilities:
 
 ## Core API
 
-| API | Description |
-|-----|-------------|
-| `Encode` | Serialize a value to bytes |
-| `Decode` | Deserialize from bytes (allocating) |
-| `View<'a>` | Deserialize without allocation (zero-copy) |
-| `Validate` | Validate wire format without constructing values |
-| `BufferWriter` | Trait for output sinks (Vec, pool, IO) |
-| `BufferReader<'a>` | Trait for input sources (slice, IO) |
-| `encode_to_vec` | Helper: `value.encode_to_vec()` |
-| `decode_with_checksum` | CRC32-checked wrapper |
-| `decode_versioned` | Version-gated decode with range check |
+| API                    | Description                                      |
+| ---------------------- | ------------------------------------------------ |
+| `Encode`               | Serialize a value to bytes                       |
+| `Decode`               | Deserialize from bytes (allocating)              |
+| `View<'a>`             | Deserialize without allocation (zero-copy)       |
+| `Validate`             | Validate wire format without constructing values |
+| `BufferWriter`         | Trait for output sinks (Vec, pool, IO)           |
+| `BufferReader<'a>`     | Trait for input sources (slice, IO)              |
+| `encode_to_vec`        | Helper: `value.encode_to_vec()`                  |
+| `decode_with_checksum` | CRC32-checked wrapper                            |
+| `decode_versioned`     | Version-gated decode with range check            |
 
 ---
 

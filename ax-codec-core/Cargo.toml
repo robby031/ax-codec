@@ -8,7 +8,7 @@ rust-version.workspace = true
 readme = "README.md"
 
 description = "Core binary codec library with zero-copy decoding, varint encoding, and configurable decode limits"
-keywords = ["serialization", "binary", "codec", "zero-copy", "no_std", "varint"]
+keywords = ["serialization", "binary", "zero-copy", "no_std", "varint"]
 categories = ["encoding", "no-std", "data-structures", "memory-management"]
 
 [features]

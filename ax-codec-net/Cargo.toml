@@ -8,7 +8,7 @@ rust-version.workspace = true
 readme = "README.md"
 
 description = "Network utilities and Tokio codec integration for framed message encoding and decoding"
-keywords = ["serialization", "binary", "codec", "network", "tokio", "framed"]
+keywords = ["serialization", "binary", "network", "tokio", "framed"]
 categories = ["encoding", "network-programming", "asynchronous", "no-std"]
 
 [features]

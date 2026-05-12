@@ -37,7 +37,8 @@ ax-codec-core = { version = "0.1", features = ["std"] }
 ### Encode
 
 ```rust
-use ax_codec_core::{Encode, BufferWriter, VecWriter};
+use ax_codec_core::{Encode, BufferWriter};
+use ax_codec_core::buffer::VecWriter;
 
 #[derive(Encode)]
 struct MyData {
@@ -54,7 +55,8 @@ let encoded = writer.into_vec();
 ### Decode
 
 ```rust
-use ax_codec_core::{Decode, BufferReader, SliceReader};
+use ax_codec_core::{Decode, BufferReader};
+use ax_codec_core::buffer::SliceReader;
 
 let mut reader = SliceReader::new(&encoded);
 let decoded = MyData::decode(&mut reader).unwrap();
@@ -63,7 +65,8 @@ let decoded = MyData::decode(&mut reader).unwrap();
 ### View (Zero-Copy)
 
 ```rust
-use ax_codec_core::{View, BufferReader, SliceReader};
+use ax_codec_core::{View, BufferReader};
+use ax_codec_core::buffer::SliceReader;
 
 #[derive(View)]
 struct MyView<'a> {
@@ -79,9 +82,10 @@ let view = MyView::view(&mut reader).unwrap();
 ### Validate
 
 ```rust
-use ax_codec_core::{Validate, BufferReader, SliceReader};
+use ax_codec_core::{Validate, BufferReader};
+use ax_codec_core::buffer::SliceReader;
 
-let mut reader = SliceReader::new(&encoded);
+let mut reader = SliceReader::new(w.as_slice());
 // Validates wire format without constructing the type
 MyData::validate(&mut reader).unwrap();
 ```
@@ -131,7 +135,8 @@ let remaining = reader.remaining();
 Control resource usage during decoding:
 
 ```rust
-use ax_codec_core::limits::{DecodeLimits, LimitedReader, SliceReader};
+use ax_codec_core::limits::{DecodeLimits, LimitedReader};
+use ax_codec_core::buffer::SliceReader;
 
 let limits = DecodeLimits {
     max_alloc: 1024 * 1024,      // 1 MiB max allocation

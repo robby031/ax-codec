@@ -18,7 +18,7 @@ ax-codec-core = "0.1"
 
 ```rust
 use ax_codec_derive::{Encode, Decode, View};
-use ax_codec_core::{Encode, Decode, View, VecWriter, SliceReader};
+use ax_codec_core::{VecWriter, SliceReader};
 
 #[derive(Encode, Decode, View)]
 struct MyStruct {
@@ -214,7 +214,7 @@ enum MyEnum {
 
 ```rust
 use ax_codec_derive::{Encode, Decode, View};
-use ax_codec_core::{Encode, Decode, View, VecWriter, SliceReader};
+use ax_codec_core::{VecWriter, SliceReader};
 
 #[derive(Encode, Decode, View, Debug, PartialEq)]
 struct User<'a> {

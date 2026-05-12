@@ -131,7 +131,8 @@ Stack-allocated small vectors for zero-allocation small collections:
 
 ```rust
 use ax_codec_bytes::SmallVecBuf;
-use ax_codec_core::{Encode, Decode, VecWriter, SliceReader};
+use ax_codec_core::{Encode, Decode};
+use ax_codec_core::buffer::{VecWriter, SliceReader};
 
 // Encode
 let mut writer = VecWriter::new();

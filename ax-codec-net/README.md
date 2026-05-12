@@ -31,7 +31,7 @@ Encode a message with a length prefix:
 
 ```rust
 use ax_codec_net::encode_frame;
-use ax_codec_core::VecWriter;
+use ax_codec_core::buffer::VecWriter;
 
 let payload = b"hello world";
 let mut writer = VecWriter::new();
@@ -50,7 +50,7 @@ Decode a frame from a buffer (zero-copy):
 
 ```rust
 use ax_codec_net::decode_frame;
-use ax_codec_core::SliceReader;
+use ax_codec_core::buffer::SliceReader;
 
 let data = b"\x0bhello world";
 let mut reader = SliceReader::new(data);
@@ -64,7 +64,7 @@ Decode a frame into a `Vec<u8>`:
 
 ```rust
 use ax_codec_net::decode_frame_to_vec;
-use ax_codec_core::SliceReader;
+use ax_codec_core::buffer::SliceReader;
 
 let data = b"\x0bhello world";
 let mut reader = SliceReader::new(data);

@@ -31,7 +31,8 @@ ax_codec = { version = "0.1", features = ["std"] }
 ### Derive macros
 
 ```rust
-use ax_codec::{Encode, Decode, VecWriter};
+use ax_codec::{Encode, Decode};
+use ax_codec_core::buffer::VecWriter;
 
 #[derive(Encode, Decode)]
 struct Packet {
@@ -44,7 +45,7 @@ fn main() {
     let mut w = VecWriter::new();
     packet.encode(&mut w).unwrap();
     let encoded = w.into_vec();
-    let decoded = Packet::decode(&mut ax_codec::buffer::SliceReader::new(&encoded)).unwrap();
+    let decoded = Packet::decode(&mut ax_codec_core::buffer::SliceReader::new(&encoded)).unwrap();
     assert_eq!(packet.id, decoded.id);
 }
 ```
@@ -52,7 +53,8 @@ fn main() {
 ### Zero-copy view
 
 ```rust
-use ax_codec::{Encode, Decode, View, VecWriter};
+use ax_codec::{Encode, Decode, View};
+use ax_codec_core::buffer::VecWriter;
 
 #[derive(Encode, Decode, View)]
 struct Message<'a> {
@@ -72,13 +74,14 @@ assert_eq!(decoded.text, "hello");
 
 ```rust
 use ax_codec::{Encode, Validate};
+use ax_codec_core::buffer::{VecWriter, SliceReader};
 
 let packet = Packet { id: 42, payload: vec![1, 2, 3] };
-let mut w = ax_codec::buffer::VecWriter::new();
+let mut w = VecWriter::new();
 packet.encode(&mut w).unwrap();
 
 // Validate wire format without constructing Packet
-let mut r = ax_codec::buffer::SliceReader::new(w.as_slice());
+let mut r = SliceReader::new(w.as_slice());
 Packet::validate(&mut r).unwrap();
 ```
 

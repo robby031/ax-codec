@@ -8,7 +8,7 @@ rust-version.workspace = true
 readme = "README.md"
 
 description = "Buffer pooling and bytes crate integration for zero-copy operations and memory-efficient encoding"
-keywords = ["serialization", "binary", "codec", "zero-copy", "buffer-pool", "memory-management"]
+keywords = ["serialization", "binary", "zero-copy", "buffer-pool", "memory-management"]
 categories = ["encoding", "memory-management", "no-std", "data-structures"]
 
 [features]

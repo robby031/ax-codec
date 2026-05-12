@@ -25,15 +25,23 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-ax_codec = { version = "0.1", features = ["std"] }
+ax-codec = { version = "0.1", features = ["std"] }
 ax-codec-derive = "0.1"  # Required for derive macros
+ax-codec-core = "0.1"    # Required by derive macros
 ```
+
+**Why three dependencies?**
+- `ax-codec`: Meta crate that re-exports all types, traits, and utilities
+- `ax-codec-derive`: Procedural macros for `#[derive(Encode, Decode, View)]`
+- `ax-codec-core`: Core traits (`Encode`, `Decode`, `View`) used by derive macros
+
+This is a limitation of Rust procedural macros: the macro crate generates code that references `ax_codec_core::Encode`, so your crate must have `ax-codec-core` as a dependency to resolve these references.
 
 ### Derive macros
 
 ```rust
-use ax_codec::{Encode, Decode, VecWriter};
-use ax_codec_derive::{Encode, Decode};
+use ax_codec::{Decode, Encode, VecWriter, SliceReader};
+use ax_codec_derive::{Decode, Encode};
 
 #[derive(Encode, Decode)]
 struct Packet {
@@ -46,7 +54,7 @@ fn main() {
     let mut w = VecWriter::new();
     packet.encode(&mut w).unwrap();
     let encoded = w.into_vec();
-    let decoded = Packet::decode(&mut ax_codec::SliceReader::new(&encoded)).unwrap();
+    let decoded = Packet::decode(&mut SliceReader::new(&encoded)).unwrap();
     assert_eq!(packet.id, decoded.id);
 }
 ```
@@ -54,13 +62,14 @@ fn main() {
 ### Zero-copy view
 
 ```rust
-use ax_codec::{Encode, Decode, View, VecWriter};
+use ax_codec::{Encode, Decode, View, VecWriter, SliceReader};
 use ax_codec_derive::{Encode, Decode, View};
 
+// Use View for borrowed data (&str, &[u8])
 #[derive(Encode, Decode, View)]
 struct Message<'a> {
     id: u32,
-    text: &'a str,
+    text: &'a str,  // Use &str for zero-copy
 }
 
 let msg = Message { id: 42, text: "hello" };
@@ -68,6 +77,26 @@ let mut w = VecWriter::new();
 msg.encode(&mut w).unwrap();
 let bytes = w.into_vec();
 let decoded = Message::view(&bytes).unwrap();
+assert_eq!(decoded.text, "hello");
+```
+
+**Note:** `View` only works with borrowed types (`&str`, `&[u8]`). For owned types (`String`, `Vec<u8>`), use `Decode` instead:
+
+```rust
+use ax_codec::{Decode, Encode, VecWriter, SliceReader};
+use ax_codec_derive::{Decode, Encode};
+
+#[derive(Encode, Decode)]
+struct Message {
+    id: u32,
+    text: String,  // Use String for owned data
+}
+
+let msg = Message { id: 42, text: "hello".to_string() };
+let mut w = VecWriter::new();
+msg.encode(&mut w).unwrap();
+let bytes = w.into_vec();
+let decoded = Message::decode(&mut SliceReader::new(&bytes)).unwrap();
 assert_eq!(decoded.text, "hello");
 ```
 

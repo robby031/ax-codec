@@ -1,4 +1,4 @@
-use ax_codec::{Decode, Encode, buffer::SliceReader};
+use ax_codec::{Decode, Encode, SliceReader};
 
 #[derive(Debug, Clone, PartialEq, Encode, Decode)]
 struct Point {

@@ -1,6 +1,5 @@
 use ax_codec::{
-    BufferReader, Decode, Encode, Validate, View,
-    buffer::{SliceReader, VecWriter},
+    BufferReader, Decode, Encode, Validate, View, SliceReader, VecWriter,
 };
 
 #[derive(Debug, PartialEq, Eq, Encode, Decode, View)]

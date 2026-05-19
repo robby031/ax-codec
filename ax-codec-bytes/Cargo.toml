@@ -4,6 +4,7 @@ version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
+repository.workspace = true
 rust-version.workspace = true
 readme = "README.md"
 
@@ -20,7 +21,7 @@ smallvec = ["dep:smallvec"]
 
 [dependencies]
 ax-codec-core = { workspace = true }
-bytes = { version = "1", optional = true }
-smallvec = { version = "1", optional = true }
+bytes = { version = "1.11.1", optional = true }
+smallvec = { version = "1.15.1", optional = true }
 
 [dev-dependencies]

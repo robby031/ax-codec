@@ -9,22 +9,22 @@ members = [
 ]
 
 [workspace.package]
-version = "0.1.6"
+version = "0.1.7"
 edition = "2024"
 authors = ["Bagus Dwi Harianto robbymangkualam2000@gmail.com"]
 license = "MIT"
 repository = "https://github.com/robby031/ax-codec"
-description = "A Rust binary codec with predictable runtime**, minimal allocation, and zero-copy decoding."
+description = "A Rust binary codec with predictable runtime, minimal allocation, and zero-copy decoding."
 readme = "README.md"
 rust-version = "1.85"
 keywords = ["serialization", "binary", "codec", "zero-copy", "no_std"]
 categories = ["encoding", "no-std", "network-programming", "data-structures"]
 
 [workspace.dependencies]
-ax-codec-core = { path = "ax-codec-core", version = "0.1.6" }
-ax-codec-bytes = { path = "ax-codec-bytes", version = "0.1.6" }
-ax-codec-derive = { path = "ax-codec-derive", version = "0.1.6" }
-ax-codec-net = { path = "ax-codec-net", version = "0.1.6" }
+ax-codec-core = { path = "ax-codec-core", version = "0.1.7" }
+ax-codec-bytes = { path = "ax-codec-bytes", version = "0.1.7" }
+ax-codec-derive = { path = "ax-codec-derive", version = "0.1.7" }
+ax-codec-net = { path = "ax-codec-net", version = "0.1.7" }
 
 [package]
 name = "ax-codec"

@@ -1,44 +1,46 @@
 # ax-codec-core
 
-Low-level binary codec primitives for ax_codec. This crate provides the core encoding/decoding traits, buffer abstractions, and utility functions.
+Low-level binary codec primitives for Rust.
 
-## Features
+- `no_std` compatible
+- Zero-copy decoding
+- Varint encoding
+- Optional SIMD fast-path
+- Decode limits
+- CRC32 checksum support
+- Versioned wire format support
 
-- **`no_std`** compatible (with `alloc` feature)
-- **Zero-copy** borrow decoding via `View<'a>`
-- **Varint** encoding (LEB128 / Protocol Buffers style)
-- **SIMD fast-path** for varint decode on x86_64 (optional)
-- **Decode limits** — configurable max allocation, depth, string/vec length
-- **CRC32 checksums** for data integrity (optional)
-- **Version-gated** decoding for wire format evolution
+---
 
 ## Installation
-
-Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
 ax-codec-core = { version = "0.1", features = ["std"] }
 ```
 
-### Feature Flags
+---
 
-- `std` - Enables std library support (default)
-- `alloc` - Enables alloc library support (required for most types)
-- `simd` - Enables SIMD-accelerated varint decoding (x86_64, aarch64)
-- `crc32` - Enables CRC32 checksum support
-- `bytes` - Enables integration with `bytes` crate
-- `axhash` - Enables integration with `axhash-map` crate
-- `dhat-heap` - Enables dhat heap profiling
-- `jemalloc` - Enables jemalloc allocator integration
+## Feature Flags
 
-## Core Traits
+| Feature | Description |
+|---|---|
+| `std` | Standard library support |
+| `alloc` | Allocation support |
+| `simd` | SIMD varint decoding |
+| `crc32` | CRC32 checksum support |
+| `bytes` | `bytes` crate integration |
+| `axhash` | `axhash-map` integration |
 
-### Encode
+---
+
+## Encode
 
 ```rust
-use ax_codec_core::{Encode, BufferWriter};
-use ax_codec_core::buffer::VecWriter;
+use ax_codec_core::{
+    Encode,
+    buffer::VecWriter,
+};
 
 #[derive(Encode)]
 struct MyData {
@@ -46,211 +48,216 @@ struct MyData {
     value: u64,
 }
 
-let data = MyData { id: 42, value: 100 };
+let data = MyData {
+    id: 42,
+    value: 100,
+};
+
 let mut writer = VecWriter::new();
+
 data.encode(&mut writer).unwrap();
-let encoded = writer.into_vec();
+
+let bytes = writer.into_vec();
 ```
 
-### Decode
+---
+
+## Decode
 
 ```rust
-use ax_codec_core::{Decode, BufferReader};
-use ax_codec_core::buffer::SliceReader;
+use ax_codec_core::{
+    Decode,
+    buffer::SliceReader,
+};
 
-let mut reader = SliceReader::new(&encoded);
-let decoded = MyData::decode(&mut reader).unwrap();
+let mut reader =
+    SliceReader::new(&bytes);
+
+let decoded =
+    MyData::decode(&mut reader)
+        .unwrap();
 ```
 
-### View (Zero-Copy)
+---
+
+## Zero-copy View
 
 ```rust
-use ax_codec_core::{View, BufferReader};
-use ax_codec_core::buffer::SliceReader;
+use ax_codec_core::View;
 
 #[derive(View)]
 struct MyView<'a> {
     id: u32,
     data: &'a [u8],
 }
-
-let mut reader = SliceReader::new(&encoded);
-let view = MyView::view(&mut reader).unwrap();
-// No allocation - borrows directly from input
 ```
 
-### Validate
+Borrowed decoding without allocation.
+
+---
+
+## Validate
 
 ```rust
-use ax_codec_core::{Validate, BufferReader};
-use ax_codec_core::buffer::SliceReader;
+use ax_codec_core::{
+    Validate,
+    buffer::SliceReader,
+};
 
-let mut reader = SliceReader::new(w.as_slice());
-// Validates wire format without constructing the type
-MyData::validate(&mut reader).unwrap();
+let mut reader =
+    SliceReader::new(&bytes);
+
+MyData::validate(&mut reader)
+    .unwrap();
 ```
+
+Validate payloads without constructing values.
+
+---
 
 ## Buffer Types
 
 ### VecWriter
 
-Allocating writer that grows as needed:
-
 ```rust
 use ax_codec_core::buffer::VecWriter;
 
 let mut writer = VecWriter::new();
+
 writer.write_all(b"hello").unwrap();
-let bytes = writer.into_vec();
 ```
 
-### PooledVecWriter
+---
 
-Thread-local pooled writer for reduced allocations:
+### PooledVecWriter
 
 ```rust
 use ax_codec_core::buffer::PooledVecWriter;
 
-let mut writer = PooledVecWriter::new();
-writer.write_all(b"hello").unwrap();
-let bytes = writer.into_vec(); // Returns buffer, doesn't recycle
-// Writer automatically recycles on drop if not finished
+let mut writer =
+    PooledVecWriter::new();
 ```
+
+Thread-local pooled writer for reduced allocations.
+
+---
 
 ### SliceReader
 
-Non-allocating reader from byte slices:
-
 ```rust
 use ax_codec_core::buffer::SliceReader;
 
-let data = b"hello world";
-let mut reader = SliceReader::new(data);
-let byte = reader.next().unwrap();
-let remaining = reader.remaining();
+let data = b"hello";
+
+let mut reader =
+    SliceReader::new(data);
 ```
+
+---
 
 ## Decode Limits
 
-Control resource usage during decoding:
-
 ```rust
-use ax_codec_core::limits::{DecodeLimits, LimitedReader};
-use ax_codec_core::buffer::SliceReader;
-
-let limits = DecodeLimits {
-    max_alloc: 1024 * 1024,      // 1 MiB max allocation
-    max_depth: 32,               // Max nesting depth
-    max_string_len: 4096,        // Max string length
-    max_vec_len: 1024,           // Max vec/collection size
-    max_slice_len: 1024,         // Max slice length for zero-copy
+use ax_codec_core::{
+    limits::{
+        DecodeLimits,
+        LimitedReader,
+    },
+    buffer::SliceReader,
 };
 
-let reader = SliceReader::new(&data);
-let mut limited = LimitedReader::new(reader, limits);
-let decoded = MyData::decode(&mut limited).unwrap();
+let limits =
+    DecodeLimits::conservative();
+
+let reader =
+    SliceReader::new(&data);
+
+let mut limited =
+    LimitedReader::new(reader, limits);
 ```
 
-### Preset Limits
+---
 
-```rust
-use ax_codec_core::limits::DecodeLimits;
-
-// Conservative limits for untrusted input
-let limits = DecodeLimits::conservative();
-
-// Unlimited limits (use with caution)
-let limits = DecodeLimits::unlimited();
-
-// Custom limits
-let limits = DecodeLimits {
-    max_alloc: 16 * 1024 * 1024, // 16 MiB
-    ..DecodeLimits::default()
-};
-```
-
-## Varint Encoding
-
-Variable-length integer encoding (LEB128 style):
+## Varint
 
 ```rust
 use ax_codec_core::varint;
 
-let mut writer = VecWriter::new();
-varint::encode_uvarint(300, &mut writer).unwrap();
-varint::encode_svarint(-150, &mut writer).unwrap();
-
-let mut reader = SliceReader::new(writer.as_slice());
-let decoded_u = varint::decode_uvarint(&mut reader).unwrap();
-let decoded_s = varint::decode_svarint(&mut reader).unwrap();
+varint::encode_uvarint(
+    300,
+    &mut writer,
+).unwrap();
 ```
 
-## Checksums
+LEB128 / protobuf-style variable integer encoding.
 
-CRC32 checksums for data integrity:
+---
+
+## CRC32 Checksums
 
 ```rust
 use ax_codec_core::checksum;
 
-let data = MyData { id: 42, value: 100 };
-let mut writer = VecWriter::new();
-
-// Encode with checksum
-checksum::encode_with_checksum(&data, &mut writer).unwrap();
-
-// Decode with checksum verification
-let mut reader = SliceReader::new(writer.as_slice());
-let decoded = checksum::decode_with_checksum::<MyData, _>(&mut reader).unwrap();
+checksum::encode_with_checksum(
+    &data,
+    &mut writer,
+).unwrap();
 ```
 
-## Versioned Encoding
+---
 
-Wire format versioning:
+## Versioned Encoding
 
 ```rust
 use ax_codec_core::version;
 
-let data = MyData { id: 42, value: 100 };
-let mut writer = VecWriter::new();
-
-// Encode with version
-version::encode_versioned(1, &data, &mut writer).unwrap();
-
-// Decode with version range check
-let mut reader = SliceReader::new(writer.as_slice());
-let (ver, decoded) = version::decode_versioned::<MyData, _>(0, 2, &mut reader).unwrap();
-assert_eq!(ver, 1);
+version::encode_versioned(
+    1,
+    &data,
+    &mut writer,
+).unwrap();
 ```
+
+---
 
 ## Supported Types
 
-### Primitives
-- All integer types: `u8`, `u16`, `u32`, `u64`, `u128`, `i8`, `i16`, `i32`, `i64`, `i128`
-- Floating point: `f32`, `f64`
-- Boolean: `bool`
-
-### Collections
-- `Vec<T>` - with `alloc` feature
-- `&[T]` - zero-copy for FixedSize types
+- Integer primitives
+- Floating point types
+- `bool`
+- `Vec<T>`
+- `String`
+- `&str`
 - `Option<T>`
-- `String` - with `alloc` feature
-- `&str` - zero-copy
-- `HashMap<K, V>` - with `axhash` feature
-- `HashSet<T>` - with `axhash` feature
-- `Cow<'a, str>` - with `alloc` feature
-- `Cow<'a, [u8]>` - with `alloc` feature
+- `HashMap<K, V>`
+- `HashSet<T>`
+- `Cow<'a, str>`
+- `Cow<'a, [u8]>`
 
-## FixedSize Trait
+---
 
-Types with known constant size can implement `FixedSize` for optimizations:
+## FixedSize
 
 ```rust
 use ax_codec_core::FixedSize;
 
 impl FixedSize for MyType {
-    const SIZE: usize = 8; // Size in bytes
+    const SIZE: usize = 8;
 }
 ```
+
+Used for constant-size optimizations.
+
+---
+
+## Links
+
+- ax-codec-core
+- ax-codec
+- ax-codec-derive
+- ax-codec-net
+
+---
 
 ## License
 

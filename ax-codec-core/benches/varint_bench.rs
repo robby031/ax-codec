@@ -1,6 +1,7 @@
 use ax_codec_core::buffer::{SliceReader, VecWriter};
 use ax_codec_core::varint;
-use criterion::{BenchmarkId, Criterion, Throughput, black_box, criterion_group, criterion_main};
+use criterion::{BenchmarkId, Criterion, Throughput, criterion_group, criterion_main};
+use std::hint::black_box;
 
 fn varint_u16_bench(c: &mut Criterion) {
     let mut group = c.benchmark_group("varint_u16");

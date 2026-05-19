@@ -3,7 +3,8 @@ use ax_codec_core::{
     buffer::{SliceReader, VecWriter},
 };
 use ax_codec_derive::{Decode, Encode};
-use criterion::{Criterion, black_box, criterion_group, criterion_main};
+use criterion::{Criterion, criterion_group, criterion_main};
+use std::hint::black_box;
 
 #[derive(Debug, Clone, PartialEq, Encode, Decode)]
 struct Point {

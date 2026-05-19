@@ -10,7 +10,7 @@ cargo-fuzz = true
 [workspace]
 
 [dependencies]
-libfuzzer-sys = "0.4"
+libfuzzer-sys = "0.4.12"
 ax-codec-core = { path = "../ax-codec-core" }
 ax-codec-derive = { path = "../ax-codec-derive" }
 

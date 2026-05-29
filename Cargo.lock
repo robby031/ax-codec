@@ -61,7 +61,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
 name = "ax-codec"
-version = "0.1.7"
+version = "1.0.0"
 dependencies = [
  "ax-codec-bytes",
  "ax-codec-core",
@@ -71,7 +71,7 @@ dependencies = [
 
 [[package]]
 name = "ax-codec-bytes"
-version = "0.1.7"
+version = "1.0.0"
 dependencies = [
  "ax-codec-core",
  "bytes",
@@ -80,7 +80,7 @@ dependencies = [
 
 [[package]]
 name = "ax-codec-core"
-version = "0.1.7"
+version = "1.0.0"
 dependencies = [
  "ax-codec-derive",
  "ax-rnd",
@@ -95,7 +95,7 @@ dependencies = [
 
 [[package]]
 name = "ax-codec-derive"
-version = "0.1.7"
+version = "1.0.0"
 dependencies = [
  "ax-codec-core",
  "proc-macro2",
@@ -105,7 +105,7 @@ dependencies = [
 
 [[package]]
 name = "ax-codec-net"
-version = "0.1.7"
+version = "1.0.0"
 dependencies = [
  "ax-codec-bytes",
  "ax-codec-core",
